@@ -420,6 +420,7 @@ __global__ void Pressure_Equation(Real4* sortedPosRad,  // input: sorted positio
             double alpha = paramsD.Alpha;  // square(rhoi / paramsD.rho0);
             //            alpha = (alpha > 1) ? 1.0 : alpha;
             if (paramsD.DensityBaseProjetion)
+                // The (1-alpha) term is zeroed, which is not the same as mentioned in the thesis. 
                 Bi[i_idx] = alpha * (paramsD.rho0 - rhoi_star) / paramsD.rho0 * (TIME_SCALE / (delta_t * delta_t)) +
                             +0 * (1 - alpha) * div_vi_star * (TIME_SCALE / delta_t);
             else
@@ -634,6 +635,8 @@ __global__ void Velocity_Correction_and_update(Real4* sortedPosRad,
     //    sortedRhoPreMu[i_idx].x = sortedRhoPreMu_old[i_idx].x - delta_t * sortedRhoPreMu_old[i_idx].x * divV_star;
     Real mu_i = sortedRhoPreMu_old[i_idx].z;
 
+    // Should the divison of density be only applied to the first pressure force term? 
+    // Should the gravity force be included? It might be double counted in the other simulation system. 
     Real3 FS_force = (-grad_q_i_conservative / TIME_SCALE + laplacian_V * mu_i + paramsD.bodyForce3 + paramsD.gravity) *
                      m_i / sortedRhoPreMu_old[i_idx].x;
     derivVelRho[i_idx] = mR4(FS_force, 0.0);

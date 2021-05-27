@@ -180,6 +180,7 @@ __global__ void V_i_np__AND__d_ii_kernel(Real4* sortedPosRad,  // input: sorted 
 
     My_F_i_np += m_i * source_term;
     d_ii[i_idx] = My_d_ii;
+    // The force term here seems to include the mass, which should not be included to update the velocity?
     V_i_np[i_idx] = (My_F_i_np * dT + Veli);  // This does not contain m_0?
 }
 //--------------------------------------------------------------------------------------------------------------------------------
@@ -1178,6 +1179,7 @@ __global__ void Update_AND_Calc_Res(Real3* sortedVelMas,
 
     sortedRhoPreMu[i_idx].y = (1 - params_relaxation) * p_old[i_idx] + params_relaxation * sortedRhoPreMu[i_idx].y;
     // if(!paramsD.USE_LinearSolver)
+    // If the following line is included, the residual will always be zero.
     p_old[i_idx] = sortedRhoPreMu[i_idx].y;
     // if (paramsD.ClampPressure && sortedRhoPreMu[i_idx].y < 0)
     //    sortedRhoPreMu[i_idx].y = 0;
@@ -1572,6 +1574,7 @@ void ChFsiForceIISPH::calcPressureIISPH(std::shared_ptr<FsiBodiesDataD> otherFsi
     if (mySolutionType == FORM_SPARSE_MATRIX) {
         thrust::fill(a_ij.begin(), a_ij.end(), 0.0);
         thrust::fill(B_i.begin(), B_i.end(), 0.0);
+        // The following line resets the summGradW variable, which is written previously in the Rho_np_AND_a_ii_AND_sum_m_GradW function. 
         thrust::fill(summGradW.begin(), summGradW.end(), mR3(0.0));
         thrust::fill(numContacts.begin(), numContacts.end(), 0.0);
         //------------------------------------------------------------------------
@@ -1830,6 +1833,7 @@ void ChFsiForceIISPH::calcPressureIISPH(std::shared_ptr<FsiBodiesDataD> otherFsi
     cudaFree(isErrorD);
     free(isErrorH);
     // dxi_over_Vi.clear();
+    // Should this be cleared here? p_old is used later after this function.
     p_old.clear();
     d_ii.clear();
     V_np.clear();

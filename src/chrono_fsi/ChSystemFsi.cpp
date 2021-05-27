@@ -179,6 +179,7 @@ void ChSystemFsi::DoStepDynamics_FSI() {
         fsiInterface->Copy_fsiNodes_ChSystem_to_FluidSystem(fsiData->fsiMeshD);
         bceWorker->UpdateFlexMarkersPositionVelocity(fsiData->sphMarkersD2, fsiData->fsiMeshD);
 
+        // Are the follwing lines repeated? Commenting out them does not affect the simulation results though. 
         printf("Update Flexible Marker\n");
         fsiInterface->Copy_fsiNodes_ChSystem_to_FluidSystem(fsiData->fsiMeshD);
         bceWorker->UpdateFlexMarkersPositionVelocity(fsiData->sphMarkersD2, fsiData->fsiMeshD);

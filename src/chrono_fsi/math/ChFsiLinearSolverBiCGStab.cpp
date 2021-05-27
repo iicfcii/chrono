@@ -38,7 +38,7 @@ void ChFsiLinearSolverBiCGStab::Solve(int SIZE,
                                       double* b) {
 #ifndef CUDART_VERSION
 #error CUDART_VERSION Undefined!
-#elif (CUDART_VERSION == 11000)
+#elif (CUDART_VERSION == 11000) // CUDA 11.X may also work?
 
     double *r, *rh, *p, *ph, *v, *s, *t, *Ac;
 
