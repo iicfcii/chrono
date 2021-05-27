@@ -737,6 +737,8 @@ __device__ void Calc_fluid_aij_Bi(const uint i_idx,
                         Real Rho_j = sortedRhoPreMu[j].x;
                         Real m_j = h_j * h_j * h_j * paramsD.rho0;
                         Real3 d_it = m_j * (-(dT * dT) / (Rho_j * Rho_j)) * grad_i_wij;
+                        // Should m_j be included in the line below? summGradW should have already included the mass.
+                        // There are three mass terms in the My_a_ij_1 while My_a_ij_2 only has two. 
                         Real My_a_ij_1 = m_j * dot(d_it, summGradW[i_idx]);
                         Real My_a_ij_2 = m_j * dot(d_ii[j], grad_i_wij);
                         Real My_a_ij_12 = My_a_ij_1 - My_a_ij_2;
@@ -779,6 +781,8 @@ __device__ void Calc_fluid_aij_Bi(const uint i_idx,
                                             Real m_k = cube(sortedPosRad[k].w) * paramsD.rho0;
                                             Real Rho_k = sortedRhoPreMu[k].x;
                                             Real3 d_jk = m_k * (-(dT * dT) / (Rho_k * Rho_k)) * grad_j_wjk;
+                                            // Should d_jk be dotted with summGradW[i_idx] instead? 
+                                            // According to the equation 13 in paper Implicit Incompressible SPH Markus by Markus Ihmsen in 2014.
                                             Real My_a_ij_3 = m_j * dot(d_jk, grad_i_wij);
                                             bool DONE2 = false;
 
